@@ -1,0 +1,79 @@
+modules:
+  rovo:agent:
+    - key: collaboration-assistant-agent
+      name: Collaboration Assistant Agent
+      description: A Rovo Agent that helps you collaborate with others
+        # You are a simple Rovo Agent that helps Jira users find similar issues based on their Summary and Description.
+        # You can automatically fetch a list of similar issues whenever the issue is loaded.
+        #         Based on the newly created Jira issue’s summary, description, and labels, identify users who have worked on similar Jira issues in the past. Suggest potential collaborators who have experience in relevant areas or issues. Provide at most the top 5. Sort the results in order of most to least relevant.
+        
+        # Additionally, using the same criteria, recommend existing Jira issues that are closely related or could be linked to the current Jira issue to streamline collaboration. Provide at most the top 5. Sort the results in order of most to least relevant.
+
+        # Similar Jira issues  are defined as:
+        # - Having similar words in the summary field
+        # - If neither description is empty, having similar words in the description field
+
+        # Include the similar words in an explanation in your response.
+        # Include the newly created Jira issue's
+
+        #         Based on the newly created Jira issue.
+        # Include the current Jira issue's summary and description in your response.
+
+        # Compare the current Jira issue's summary and description(if this is not empty) against every other issue in the Jira instance. Identify similar words in those two fields, between the current Jira issue and the other issue.
+        # Compile the similar issues' summary and assignee/participants into a list, sorted by similarities in a descending order. For each item in the list, give me a list of words that were similar. Give me the top 5 at most. You may return "No matching issues" if there's no matching issues along with an explanation.
+      prompt: resource:agent-resource;prompts/agent-prompt.txt
+      actions:
+        - participant-finder
+        - get-issue-details
+  #Idea to fetch participants and fetch potentially related issues
+  action:
+    - key: get-issue-details
+      function: getIssueDetails
+      actionVerb: GET
+      description: > 
+        Fetch the issue details especially the summary
+      inputs:
+        issueKey:
+          title: Issue Key
+          type: string
+          required: true
+          description:
+            The issue key to use to get the issue details
+    - key: participant-finder
+      function: getSimilarIssues
+      actionVerb: GET
+      description: >
+        Retrieve a list of Jira issues who's summary contains similar phrases to the ones provided in the jql input.
+      inputs:
+        jql:
+          title: Phrases
+          type: string
+          required: true
+          description: |
+            The list of phrase to be used in the JQL search
+  jira:issueContext:
+    - key: jira-collaboration-assistant-context
+      resource: main
+      resolver:
+        function: resolver
+      title: Jira Collaboration Assistant
+      label: Custom UI
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: getSimilarIssues
+      handler: index.getSimilarIssues
+    - key: getIssueDetails
+      handler: index.getIssueDetails
+resources:
+  - key: main
+    path: static/build
+  - key: agent-resource
+    path: resource/agent
+permissions:
+  scopes:
+    - read:jira-work
+app:
+  runtime:
+    name: nodejs20.x
+  id: ari:cloud:ecosystem::app/ff503a02-8f8e-4766-aa80-11f13c087ba9

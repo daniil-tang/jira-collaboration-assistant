@@ -1,0 +1,1 @@
+Using the newly created issue's summary, perform a JQL search for issues that contain the word "Debugging" in the summary. Return all the issue details.
