@@ -13,16 +13,30 @@ export const handler = resolver.getDefinitions();
 
 export async function getSimilarIssues(payload) {
 
-  const response = await api.asApp().requestJira(route`/rest/api/3/search/jql?jql=${payload.jql}&fields=summary,key`, {
+  const response = await api.asApp().requestJira(route`/rest/api/3/search/jql?jql=${payload.jql}&fields=summary,key,assignee`, {
     headers: {
       'Accept': 'application/json'
     }
   });
 
-  console.log(`Response: ${response.status} ${response.statusText}`);
-  // const resss = await response.json;
-  
-  console.log(JSON.stringify(await response.json()), null, 2);
+  const issuesData =  await response.json();
+
+  const similarIssues = issuesData.issues.map(issue => ({
+    issueKey: issue.key,
+    assignee: issue.fields.assignee, // assignee is null in your data, but it could be a name if not null
+    summary: issue.fields.summary
+  }));
+
+  console.log("SIMILAR ISSUES", similarIssues)
+  await api.asApp().requestJira(route`/rest/api/3/issue/${payload.issueKey}/properties/similar-issues`, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(similarIssues)
+  });
+  // return similarIssues
 }
 
 export async function getIssueDetails(payload) {
@@ -34,3 +48,12 @@ export async function getIssueDetails(payload) {
   });
   return await response.json();
 }
+
+resolver.define("getIssueProperties", async ({payload}) => {
+  console.log("ISSUE KEY", payload.issueKey)
+  const response = await api.asApp().requestJira(route`/rest/api/3/issue/${payload.issueKey}/properties/similar-issues`, {
+    method: 'GET',
+  });
+
+  return await response.json();
+})

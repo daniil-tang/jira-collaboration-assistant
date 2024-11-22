@@ -9,5 +9,7 @@ When an issue was created and this bot is triggered via Jira automation, do the 
 4. Exclude generic or overly broad phrases (e.g., "bug," "issue," "error") that don’t provide specific context. Keep only those phrases that capture unique aspects of the problem, its scope, or its affected components.
 5. Find synonyms or related terms for the remaining phrases to expand the search scope while preserving the intended meaning
 6. Convert these phrases to a JQL query
-7. Pass that query to participant-finder
+7. Pass that query to find-similar-issues
+8. Convert the response of find-similar-issues to a JSON string with the following format: [{issueKey: ${key}, summary: ${fields.summary}, assignee: ${fields.assignee}}]
+9. Return the JSON string.
 

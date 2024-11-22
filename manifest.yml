@@ -23,8 +23,9 @@ modules:
         # Compile the similar issues' summary and assignee/participants into a list, sorted by similarities in a descending order. For each item in the list, give me a list of words that were similar. Give me the top 5 at most. You may return "No matching issues" if there's no matching issues along with an explanation.
       prompt: resource:agent-resource;prompts/agent-prompt.txt
       actions:
-        - participant-finder
+        - find-similar-issues
         - get-issue-details
+        # - store-similar-issues
   #Idea to fetch participants and fetch potentially related issues
   action:
     - key: get-issue-details
@@ -39,7 +40,7 @@ modules:
           required: true
           description:
             The issue key to use to get the issue details
-    - key: participant-finder
+    - key: find-similar-issues
       function: getSimilarIssues
       actionVerb: GET
       description: >
@@ -51,6 +52,30 @@ modules:
           required: true
           description: |
             The list of phrase to be used in the JQL search
+        issueKey:
+          title: Issue Key
+          type: string
+          required: true
+          description:
+            The issue key to use to store issue properties
+    # - key: store-similar-issues
+    #   function: getSimilarIssues
+    #   actionVerb: GET
+    #   description: >
+    #     Retrieve a list of Jira issues who's summary contains similar phrases to the ones provided in the jql input.
+    #   inputs:
+    #     issueKey:
+    #       title: Issue Key
+    #       type: string
+    #       required: true
+    #       description:
+    #         The issue key to use to get the issue details
+    #     issuePropertyData:
+    #       title: Issue Propety Data
+    #       type: string
+    #       required: true
+    #       description:
+    #         Data to be stored in issue properties
   jira:issueContext:
     - key: jira-collaboration-assistant-context
       resource: main
@@ -65,14 +90,22 @@ modules:
       handler: index.getSimilarIssues
     - key: getIssueDetails
       handler: index.getIssueDetails
+    # - key: storeSimilarIssues
+    #   handler: index.storeSimilarIssues
 resources:
   - key: main
     path: static/build
+    tunnel:
+      port: 3000
   - key: agent-resource
     path: resource/agent
 permissions:
   scopes:
     - read:jira-work
+    - write:jira-work
+  content:
+    styles:
+      - 'unsafe-inline'
 app:
   runtime:
     name: nodejs20.x
