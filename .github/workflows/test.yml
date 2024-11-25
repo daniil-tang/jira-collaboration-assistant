@@ -8,5 +8,5 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-      - name: Print
+    - name: Print
         run: echo "Hello World"
