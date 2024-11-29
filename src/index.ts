@@ -57,3 +57,33 @@ resolver.define("getIssueProperties", async ({payload}) => {
 
   return await response.json();
 })
+
+resolver.define("getIssueLinkTypes", async () => {
+  const response = await api.asApp().requestJira(route`/rest/api/2/issueLinkType`, {
+    method: 'GET',
+  });
+
+  return await response.json();
+})
+
+resolver.define("createIssueLink", async ({payload}) => {
+  const response = await api.asApp().requestJira(route`/rest/api/2/issueLink`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: payload?.body
+  });
+
+  return await response.json();
+})
+
+// resolver.define("getIssueLink", async ({payload}) => {
+//   console.log("ISSUE KEY", payload.issueKey)
+//   const response = await api.asApp().requestJira(route`/rest/api/2/issueLink/${linkId}`, {
+//     method: 'GET',
+//   });
+
+//   return await response.json();
+// })
