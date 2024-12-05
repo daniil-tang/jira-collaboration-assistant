@@ -66,8 +66,6 @@ function App() {
       },
     });
 
-    console.log("GONNA OPEN MODAL")
-
     modal.open();
   };
 
