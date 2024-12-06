@@ -2,7 +2,7 @@
 import Button from "@atlaskit/button/new";
 import { Box, Inline, xcss, Text } from "@atlaskit/primitives";
 import Select from "@atlaskit/select";
-import { invoke, view } from "@forge/bridge";
+import { invoke, showFlag, view } from "@forge/bridge";
 import React, { useEffect, useState } from "react";
 import { Label } from "@atlaskit/form";
 import styled from "styled-components";
@@ -106,6 +106,12 @@ export default function LinkModal(props) {
                   name: selectedLinkType.name,
                 },
               },
+            });
+            const flag = showFlag({
+              id: "link-success-flag",
+              title: `Linked ${props.outwardIssueKey } to ${props.inwardIssueKey }.`,
+              type: "success",
+              isAutoDismiss: true,
             });
             view.close();
           }}

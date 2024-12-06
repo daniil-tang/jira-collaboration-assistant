@@ -103,6 +103,7 @@ permissions:
   scopes:
     - read:jira-work
     - write:jira-work
+    - write:servicedesk-request
   content:
     styles:
       - 'unsafe-inline'
