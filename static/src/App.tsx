@@ -42,11 +42,8 @@ function App() {
       const context = await view.getContext();
 
       const issueKey = context.extension.issue.key;
-      console.log("CONTEXT", context);
       const similarIssuesResult: any = await invoke("getIssueProperties", { issueKey });
-      console.log("SIMILAR?", similarIssuesResult);
       setSimilarIssues(similarIssuesResult?.value);
-      console.log("SIMILAR ISSUES", similarIssuesResult?.value);
       setIsFetching(false);
     })();
   }, []);
@@ -108,7 +105,6 @@ function App() {
   };
 
   const renderContent = () => {
-    console.log("EXTENSION?", context?.extension)
     switch (context?.extension?.modal?.modalKey) {
       case "link-modal":
         return <LinkModal inwardIssueKey={context?.extension?.modal?.data?.inwardIssueKey} outwardIssueKey={context?.extension?.modal?.data?.outwardIssueKey} />;

@@ -1,31 +1,58 @@
 /*eslint-disable*/
 import Button from "@atlaskit/button/new";
-import { Box, Inline, xcss } from "@atlaskit/primitives";
+import { Box, Inline, xcss, Text } from "@atlaskit/primitives";
 import Select from "@atlaskit/select";
 import { invoke, view } from "@forge/bridge";
 import React, { useEffect, useState } from "react";
 import { Label } from "@atlaskit/form";
+import styled from "styled-components";
+import Spinner from '@atlaskit/spinner';
+
+const Footer = styled.div({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  padding: "0",
+  position: "absolute",
+  bottom: "20px",
+  right: "20px",
+});
+
+const Outward = styled.div({
+  color: "#44546F",
+  fontWeight: 700
+})
 
 export default function LinkModal(props) {
   const [issueLinkTypes, setIssueLinkTypes] = useState([]);
   const [selectedLinkType, setSelectedLinkType] = useState(null);
+  const [inwardIssue, setInwardIssue] = useState(null);
+  const [outwardIssue, setOutwardIssue] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLinking, setIsLinking] = useState(false);
+
+
 
   useEffect(() => {
     (async () => {
-      console.log("ISSUE KEY", props.outwardIssueKey);
+      setInwardIssue(await invoke("getIssueDetails", {issueKey: props.inwardIssueKey}));
+      setOutwardIssue(await invoke("getIssueDetails", {issueKey: props.outwardIssueKey}));
       const { issueLinkTypes }: any = await invoke("getIssueLinkTypes");
       setIssueLinkTypes(issueLinkTypes);
+      setIsLoading(false)
     })();
   }, []);
 
-  return (
+  return isLoading ? <Spinner /> : (
+    <>
     <Box padding="space.200" xcss={xcss({})}>
       <>
         <Label htmlFor="async-select-example">{props.inwardIssueKey}</Label>
         <Select
+          isDisabled={isLinking}
           inputId="link-select"
           // eslint-disable-next-line @atlaskit/ui-styling-standard/no-classname-prop -- Ignored via go/DSP-18766
-          onChange={(value) => {
+          onChange={({value}) => {
             console.log("VALUE", value);
             setSelectedLinkType(value);
           }}
@@ -52,10 +79,10 @@ export default function LinkModal(props) {
           )}
           placeholder="Select an Issue link type"
         />
-        {props.outwardIssueKey}
+        <Outward>{outwardIssue.key} {outwardIssue.fields.summary}</Outward>
       </>
       <br />
-      <Inline alignInline="start">
+      <Footer >
         <Button
           onClick={() => {
             view.close();
@@ -66,6 +93,7 @@ export default function LinkModal(props) {
         <Button
           appearance="primary"
           onClick={async () => {
+            setIsLinking(true)
             await invoke("createIssueLink", {
               body: {
                 inwardIssue: {
@@ -79,11 +107,14 @@ export default function LinkModal(props) {
                 },
               },
             });
+            view.close();
           }}
+          isLoading={isLinking}
         >
           Confirm
         </Button>
-      </Inline>
+      </Footer>
     </Box>
+    </>
   );
 }

@@ -49,6 +49,18 @@ export async function getIssueDetails(payload) {
   return await response.json();
 }
 
+resolver.define("getIssueDetails", async ({payload}) => {
+  console.log("PAYLOAD", payload.issueKey)
+  const response = await api.asApp().requestJira(route`/rest/api/2/issue/${payload.issueKey}`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  console.log(response.status)
+  return await response.json();
+})
+
+
 resolver.define("getIssueProperties", async ({payload}) => {
   console.log("ISSUE KEY", payload.issueKey)
   const response = await api.asApp().requestJira(route`/rest/api/3/issue/${payload.issueKey}/properties/similar-issues`, {
@@ -67,14 +79,18 @@ resolver.define("getIssueLinkTypes", async () => {
 })
 
 resolver.define("createIssueLink", async ({payload}) => {
+  console.log("BODY", payload?.body)
   const response = await api.asApp().requestJira(route`/rest/api/2/issueLink`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: payload?.body
+    body: JSON.stringify(payload?.body)
   });
+  if (response.status == 201) {
+    return "Success"
+  }
 
   return await response.json();
 })
