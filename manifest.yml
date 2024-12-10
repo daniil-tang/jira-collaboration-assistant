@@ -81,7 +81,7 @@ modules:
       resource: main
       resolver:
         function: resolver
-      title: Jira Collaboration Assistant
+      title: JSM Collaboration Assistant
       label: Custom UI
   function:
     - key: resolver

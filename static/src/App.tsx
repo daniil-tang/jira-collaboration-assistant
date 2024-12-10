@@ -108,44 +108,51 @@ function App() {
     );
   };
 
+  const getUniqueAssignees = () =>  [
+    ...new Map(
+      similarIssues
+        ?.filter((similarIssue) => similarIssue.assignee) 
+        .map((similarIssue) => similarIssue.assignee) 
+        .map((assignee) => [assignee.accountId, assignee])
+    ).values(),
+  ];
+
   const renderSuggestedParticipants = () => {
     return (
       <DynamicTableStateless
         head={suggestedParticipantsHead}
-        rows={similarIssues
-          ?.filter((similarIssue) => similarIssue.assignee)
-          .map((similarIssue) => ({
-            key: similarIssue?.key,
-            cells: [
-              { content: similarIssue?.assignee?.displayName },
-              {
-                content: (
-                  <Button
-                    isLoading={isAddingRequestParticipant}
-                    onClick={async () => {
-                      setIsAddingRequestParticipant(true);
-                      const res = await invoke("addRequestParticipants", {
-                        issueKey: context.extension.issue.key,
-                        body: {
-                          accountIds: [similarIssue?.assignee?.accountId],
-                        },
-                      });
-                      setIsAddingRequestParticipant(false);
-                      console.log("RES", res)
-                      const flag = showFlag({
-                        id: "participant-success-flag",
-                        title: `Added ${similarIssue?.assignee?.displayName} as request participant.`,
-                        type: "success",
-                        isAutoDismiss: true,
-                      });
-                    }}
-                  >
-                    Add as participant
-                  </Button>
-                ),
-              },
-            ],
-          }))}
+        rows={getUniqueAssignees().map((assignee) => ({
+          key: assignee.accountId,
+          cells: [
+            { content: assignee.displayName },
+            {
+              content: (
+                <Button
+                  isLoading={isAddingRequestParticipant}
+                  onClick={async () => {
+                    setIsAddingRequestParticipant(true);
+                    const res = await invoke("addRequestParticipants", {
+                      issueKey: context.extension.issue.key,
+                      body: {
+                        accountIds: [assignee.accountId],
+                      },
+                    });
+                    setIsAddingRequestParticipant(false);
+                    console.log("RES", res);
+                    const flag = showFlag({
+                      id: "participant-success-flag",
+                      title: `Added ${assignee.displayName} as request participant.`,
+                      type: "success",
+                      isAutoDismiss: true,
+                    });
+                  }}
+                >
+                  Add as participant
+                </Button>
+              ),
+            },
+          ],
+        }))}
         rowsPerPage={10}
         defaultPage={1}
         loadingSpinnerSize="large"

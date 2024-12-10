@@ -8,6 +8,19 @@ import { Label } from "@atlaskit/form";
 import styled from "styled-components";
 import Spinner from '@atlaskit/spinner';
 
+const Title = styled.h1({
+  alignItems: 'center',
+  display: 'flex',
+  margin: "0px",
+  minWidth: 0,
+  fontSize: "20px",
+  fontStyle: 'inherit',
+  fontWeight: "500",
+  letterSpacing: '-0.008em',
+  lineHeight: 1,
+  padding: "15px"
+});
+
 const Footer = styled.div({
   display: 'flex',
   justifyContent: 'flex-end',
@@ -45,9 +58,11 @@ export default function LinkModal(props) {
 
   return isLoading ? <Spinner /> : (
     <>
+    <Title>Link Issue</Title>
     <Box padding="space.200" xcss={xcss({})}>
       <>
-        <Label htmlFor="async-select-example">{props.inwardIssueKey}</Label>
+        {/* <Label htmlFor="async-select-example">{props.inwardIssueKey}</Label> */}
+        <Label htmlFor="async-select-example">Select relationship</Label>
         <Select
           isDisabled={isLinking}
           inputId="link-select"
@@ -79,7 +94,7 @@ export default function LinkModal(props) {
           )}
           placeholder="Select an Issue link type"
         />
-        <Outward>{outwardIssue.key} {outwardIssue.fields.summary}</Outward>
+        {/* <Outward>{outwardIssue.key} {outwardIssue.fields.summary}</Outward> */}
       </>
       <br />
       <Footer >
