@@ -1,46 +1,21 @@
-# Forge Hello World
+## Setup
+1.Run `pnpm install`
+2. `cd` into `/static` and run:
+    ```
+    pnpm install
+    pnpm run build
+    ```
+3. From the project root register the app with `forge register`
+4. Deploy the app with `forge deploy`
 
-This project contains a Forge app written in Javascript that displays `Hello World!` in a Jira issue context panel. 
 
-See [developer.atlassian.com/platform/forge/](https://developer.atlassian.com/platform/forge) for documentation and tutorials explaining Forge.
-
-## Requirements
-
-See [Set up Forge](https://developer.atlassian.com/platform/forge/set-up-forge/) for instructions to get set up.
-
-## Quick start
-- Install top-level dependencies:
-```
-npm install
-```
-
-- Install dependencies inside of the `static/hello-world` directory:
-```
-npm install
-```
-
-- Modify your app by editing the files in `static/hello-world/src/`.
-
-- Build your app (inside of the `static/hello-world` directory):
-```
-npm run build
-```
-
-- Deploy your app by running:
-```
-forge deploy
-```
-
-- Install your app in an Atlassian site by running:
-```
-forge install
-```
-
-### Notes
-- Use the `forge deploy` command when you want to persist code changes.
-- Use the `forge install` command when you want to install the app on a new site.
-- Once the app is installed on a site, the site picks up the new app changes you deploy without needing to rerun the install command.
-
-## Support
-
-See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how to get help and provide feedback.
+## User Guide
+1. Create a global automation
+2. Select issue created as the trigger
+3. Select Use Rovo Avent as the action
+    1. Select the `Collaboration Assistant Agent` as the Rovo Agent.
+    2. Use `Use the prompt provided in the forge manifest.` for the prompt.
+    The automation should look like this:![image](https://github.com/user-attachments/assets/6dc7c90f-5b38-41cb-8594-3c83f4027f5f)
+4. Next, create a JSM request
+5. After the automation runs successfully, the list of suggested similar issues and potential collaborators should be populated in the issue context view.
+    1. Note: Potential Collaborators are obtained from the assignees of previous issues/requests  
